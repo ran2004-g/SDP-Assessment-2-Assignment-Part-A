@@ -34,7 +34,6 @@ public sealed class RecipeManager : IRecipeManager
         // non-positive IDs, and blank titles
         foreach (var r in recipes)
         {
-            // Reuse AddRecipe validation logic
             bool ok = AddRecipe(r);
 
             if (!ok)
@@ -51,66 +50,216 @@ public sealed class RecipeManager : IRecipeManager
     public int CookingPlanCount => _cookingPlan.Count;
     public int PendingInstructionCount => _activeInstructions.Count;
     public int RemovedRecipeCount => _removedRecipeHistory.Count;
-    public bool AddRecipe(Recipe recipe) =>
-        throw new NotImplementedException("Part A: implement AddRecipe.");
 
-    public Recipe? FindRecipe(int recipeId) =>
-        throw new NotImplementedException("Part A: implement FindRecipe.");
+    // Private helper method: check whether a recipe ID exists in the cooking plan
+    private bool IsRecipeInCookingPlan(int recipeId)
+    {
+        foreach (var id in _cookingPlan)
+        {
+            if (id == recipeId)
+                return true;
+        }
 
-    public bool RemoveRecipe(int recipeId) =>
-        throw new NotImplementedException("Part A: implement RemoveRecipe.");
+        return false;
+    }
 
-    public int AddIngredientsToShoppingList(int recipeId) =>
-        throw new NotImplementedException("Part A: implement AddIngredientsToShoppingList.");
+    // Part A: interface method implementations
+    public bool AddRecipe(Recipe recipe)
+    {
+        if (recipe == null)
+            throw new ArgumentNullException(nameof(recipe));
 
-    public IReadOnlyList<string> GetShoppingList() =>
-        throw new NotImplementedException("Part A: implement GetShoppingList.");
+        if (recipe.Id <= 0)
+            return false;
 
-    public void ClearShoppingList() =>
-        throw new NotImplementedException("Part A: implement ClearShoppingList.");
+        if (string.IsNullOrWhiteSpace(recipe.Title))
+            return false;
 
-    public bool AddRecipeToCookingPlan(int recipeId) =>
-        throw new NotImplementedException("Part A: implement AddRecipeToCookingPlan.");
+        if (_recipeCatalogue.ContainsKey(recipe.Id))
+            return false;
 
-    public bool RemoveRecipeFromCookingPlan(int recipeId) =>
-        throw new NotImplementedException("Part A: implement RemoveRecipeFromCookingPlan.");
+        _recipeCatalogue.Add(recipe.Id, recipe);
+        return true;
+    }
 
-    public bool RestoreLastRemovedRecipe() =>
-        throw new NotImplementedException("Part A: implement RestoreLastRemovedRecipe.");
+    public Recipe? FindRecipe(int recipeId)
+    {
+        _recipeCatalogue.TryGetValue(recipeId, out var recipe);
+        return recipe;
+    }
 
-    public int? PeekLastRemovedRecipe() =>
-        throw new NotImplementedException("Part A: implement PeekLastRemovedRecipe.");
+    public bool RemoveRecipe(int recipeId)
+    {
+        if (!_recipeCatalogue.ContainsKey(recipeId))
+            return false;
 
-    public IReadOnlyList<int> GetCookingPlan() =>
-        throw new NotImplementedException("Part A: implement GetCookingPlan.");
+        // Do not remove a recipe if it is currently in the cooking plan
+        if (IsRecipeInCookingPlan(recipeId))
+            return false;
 
-    public bool StartCooking(int recipeId) =>
-        throw new NotImplementedException("Part A: implement StartCooking.");
+        _recipeCatalogue.Remove(recipeId);
+        return true;
+    }
 
-    public string? PeekNextInstruction() =>
-        throw new NotImplementedException("Part A: implement PeekNextInstruction.");
+    public int AddIngredientsToShoppingList(int recipeId)
+    {
+        var recipe = FindRecipe(recipeId);
 
-    public string? CompleteNextInstruction() =>
-        throw new NotImplementedException("Part A: implement CompleteNextInstruction.");
+        if (recipe is null)
+            return 0;
 
-    public IReadOnlyList<Recipe> SearchByTitle(string searchText) =>
-        throw new NotImplementedException("Part B: implement SearchByTitle.");
+        int count = 0;
 
-    public IReadOnlyList<Recipe> SearchByIngredient(string searchText) =>
-        throw new NotImplementedException("Part B: implement SearchByIngredient.");
+        foreach (var ingredient in recipe.Ingredients)
+        {
+            _shoppingList.Add(ingredient);
+            count++;
+        }
 
-    public IReadOnlyList<Recipe> GetHighestProteinRecipes(int count) =>
-        throw new NotImplementedException("Part B: implement GetHighestProteinRecipes.");
+        return count;
+    }
 
-    public bool AddSavedRecipe(int recipeId) =>
-        throw new NotImplementedException("Part B: implement AddSavedRecipe.");
+    public IReadOnlyList<string> GetShoppingList()
+    {
+        return _shoppingList.AsReadOnly();
+    }
 
-    public bool RemoveSavedRecipe(int recipeId) =>
-        throw new NotImplementedException("Part B: implement RemoveSavedRecipe.");
+    public void ClearShoppingList()
+    {
+        _shoppingList.Clear();
+    }
 
-    public bool IsRecipeSaved(int recipeId) =>
-        throw new NotImplementedException("Part B: implement IsRecipeSaved.");
+    public bool AddRecipeToCookingPlan(int recipeId)
+    {
+        if (!_recipeCatalogue.ContainsKey(recipeId))
+            return false;
 
-    public IReadOnlyList<int> GetSavedRecipes() =>
-        throw new NotImplementedException("Part B: implement GetSavedRecipes.");
+        if (IsRecipeInCookingPlan(recipeId))
+            return false;
+
+        _cookingPlan.AddLast(recipeId);
+        return true;
+    }
+
+    public bool RemoveRecipeFromCookingPlan(int recipeId)
+    {
+        LinkedListNode<int>? node = null;
+        var current = _cookingPlan.First;
+
+        while (current != null)
+        {
+            if (current.Value == recipeId)
+            {
+                node = current;
+                break;
+            }
+
+            current = current.Next;
+        }
+
+        if (node is null)
+            return false;
+
+        _cookingPlan.Remove(node);
+
+        // Store the removed recipe ID in the history stack
+        _removedRecipeHistory.Push(recipeId);
+
+        return true;
+    }
+
+    public int? PeekLastRemovedRecipe()
+    {
+        if (_removedRecipeHistory.Count == 0)
+            return null;
+
+        return _removedRecipeHistory.Peek();
+    }
+
+    public bool RestoreLastRemovedRecipe()
+    {
+        if (_removedRecipeHistory.Count == 0)
+            return false;
+
+        int id = _removedRecipeHistory.Pop();
+
+        if (_recipeCatalogue.ContainsKey(id) && !IsRecipeInCookingPlan(id))
+        {
+            _cookingPlan.AddLast(id);
+            return true;
+        }
+
+        return false;
+    }
+
+    public IReadOnlyList<int> GetCookingPlan()
+    {
+        var list = new List<int>();
+
+        foreach (var item in _cookingPlan)
+        {
+            list.Add(item);
+        }
+
+        return list.AsReadOnly();
+    }
+
+    public bool StartCooking(int recipeId)
+    {
+        var recipe = FindRecipe(recipeId);
+
+        if (recipe is null)
+            return false;
+
+        if (recipe.Instructions.Count == 0)
+            return false;
+
+        // Clear previous instructions before starting a new recipe
+        _activeInstructions.Clear();
+
+        foreach (var instruction in recipe.Instructions)
+        {
+            _activeInstructions.Enqueue(instruction);
+        }
+
+        return true;
+    }
+
+    public string? PeekNextInstruction()
+    {
+        if (_activeInstructions.Count == 0)
+            return null;
+
+        return _activeInstructions.Peek();
+    }
+
+    public string? CompleteNextInstruction()
+    {
+        if (_activeInstructions.Count == 0)
+            return null;
+
+        return _activeInstructions.Dequeue();
+    }
+
+    // Part B methods: keep these as NotImplementedException during Part A
+   public IReadOnlyList<Recipe> SearchByTitle(string searchText) =>
+    throw new NotImplementedException("Part B: implement SearchByTitle.");
+
+public IReadOnlyList<Recipe> SearchByIngredient(string searchText) =>
+    throw new NotImplementedException("Part B: implement SearchByIngredient.");
+
+public IReadOnlyList<Recipe> GetHighestProteinRecipes(int count) =>
+    throw new NotImplementedException("Part B: implement GetHighestProteinRecipes.");
+
+public bool AddSavedRecipe(int recipeId) =>
+    throw new NotImplementedException("Part B: implement AddSavedRecipe.");
+
+public bool RemoveSavedRecipe(int recipeId) =>
+    throw new NotImplementedException("Part B: implement RemoveSavedRecipe.");
+
+public bool IsRecipeSaved(int recipeId) =>
+    throw new NotImplementedException("Part B: implement IsRecipeSaved.");
+
+public IReadOnlyList<int> GetSavedRecipes() =>
+    throw new NotImplementedException("Part B: implement GetSavedRecipes.");
 }
