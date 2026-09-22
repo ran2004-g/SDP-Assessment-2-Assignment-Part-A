@@ -69,4 +69,23 @@ bool result = mgr.AddRecipe(recipe);
 Assert.True(result);
 Assert.Equal(1, mgr.RecipeCount);
     }
+    
 }
+[Fact]
+public void AddRecipe_DuplicateId_ReturnsFalse()
+{
+    var mgr = CreateManager();
+    var duplicate = new Recipe
+    {
+        Id = 10,
+        Title = "Duplicate",
+        Ingredients = new List<string>(),
+        Instructions = new List<string>()
+    };
+
+    bool result = mgr.AddRecipe(duplicate);
+
+    Assert.False(result);
+    Assert.Equal(2, mgr.RecipeCount);
+}
+
