@@ -935,11 +935,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/zhangran/Desktop/sdp项目开发/RecipeManager/RecipeManagement.Tests/RecipeManagement.Tests.csproj",
+      "projectUniqueName": "/Users/zhangran/Documents/GitHub/SDP-Assessment-2-Assignment-Part-A/RecipeManager/RecipeManagement.Tests/RecipeManagement.Tests.csproj",
       "projectName": "RecipeManagement.Tests",
-      "projectPath": "/Users/zhangran/Desktop/sdp项目开发/RecipeManager/RecipeManagement.Tests/RecipeManagement.Tests.csproj",
+      "projectPath": "/Users/zhangran/Documents/GitHub/SDP-Assessment-2-Assignment-Part-A/RecipeManager/RecipeManagement.Tests/RecipeManagement.Tests.csproj",
       "packagesPath": "/Users/zhangran/.nuget/packages/",
-      "outputPath": "/Users/zhangran/Desktop/sdp项目开发/RecipeManager/RecipeManagement.Tests/obj/",
+      "outputPath": "/Users/zhangran/Documents/GitHub/SDP-Assessment-2-Assignment-Part-A/RecipeManager/RecipeManagement.Tests/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/zhangran/.nuget/NuGet/NuGet.Config"
@@ -955,8 +955,8 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {
-            "/Users/zhangran/Desktop/sdp项目开发/RecipeManager/RecipeManagement.Core/RecipeManagement.Core.csproj": {
-              "projectPath": "/Users/zhangran/Desktop/sdp项目开发/RecipeManager/RecipeManagement.Core/RecipeManagement.Core.csproj"
+            "/Users/zhangran/Documents/GitHub/SDP-Assessment-2-Assignment-Part-A/RecipeManager/RecipeManagement.Core/RecipeManagement.Core.csproj": {
+              "projectPath": "/Users/zhangran/Documents/GitHub/SDP-Assessment-2-Assignment-Part-A/RecipeManager/RecipeManagement.Core/RecipeManagement.Core.csproj"
             }
           }
         }
