@@ -1,60 +1,72 @@
 using System.Collections.Generic;
 using RecipeManagement.Core;
-
+using Xunit;
 namespace RecipeManagement.Tests;
-
 /// <summary>
 /// Example tests from the assignment specification. Add your own tests as you work.
 /// </summary>
 public sealed class RecipeManagerTests
 {
     [Fact]
-    public void Constructor_BuildsRecipeDictionary()
+public void Constructor_BuildsRecipeDictionary()
     {
-        var manager = CreateManager();
-        Assert.Equal(2, manager.RecipeCount);
-        Assert.Equal("Recipe A", manager.FindRecipe(10)?.Title);
+var manager = CreateManager();
+Assert.Equal(2, manager.RecipeCount);
+Assert.Equal("Recipe A", manager.FindRecipe(10)?.Title);
     }
-
     [Fact]
-    public void InstructionsAreCompletedInFileOrder()
+public void InstructionsAreCompletedInFileOrder()
     {
-        var manager = CreateManager();
-        Assert.True(manager.StartCooking(10));
-        Assert.Equal("First step", manager.PeekNextInstruction());
-        Assert.Equal("First step", manager.CompleteNextInstruction());
-        Assert.Equal("Second step", manager.PeekNextInstruction());
+var manager = CreateManager();
+Assert.True(manager.StartCooking(10));
+Assert.Equal("First step", manager.PeekNextInstruction());
+Assert.Equal("First step", manager.CompleteNextInstruction());
+Assert.Equal("Second step", manager.PeekNextInstruction());
     }
-
     [Fact]
-    public void RemovedRecipesAreRestoredLastInFirstOut()
+public void RemovedRecipesAreRestoredLastInFirstOut()
     {
-        var manager = CreateManager();
-        manager.AddRecipeToCookingPlan(10);
-        manager.AddRecipeToCookingPlan(20);
-        manager.RemoveRecipeFromCookingPlan(10);
-        manager.RemoveRecipeFromCookingPlan(20);
-        Assert.Equal(20, manager.PeekLastRemovedRecipe());
-        Assert.True(manager.RestoreLastRemovedRecipe());
-        Assert.Equal(new[] { 20 }, manager.GetCookingPlan());
+var manager = CreateManager();
+manager.AddRecipeToCookingPlan(10);
+manager.AddRecipeToCookingPlan(20);
+manager.RemoveRecipeFromCookingPlan(10);
+manager.RemoveRecipeFromCookingPlan(20);
+Assert.Equal(20, manager.PeekLastRemovedRecipe());
+Assert.True(manager.RestoreLastRemovedRecipe());
+Assert.Equal(new[] { 20 }, manager.GetCookingPlan());
     }
-
-    private static RecipeManager CreateManager()
+private static RecipeManager CreateManager()
     {
-        return new RecipeManager(new[]
+return new RecipeManager(new[]
         {
-            new Recipe
+new Recipe
             {
-                Id = 10,
-                Title = "Recipe A",
-                Ingredients = new() { "1 apple" },
-                Instructions = new() { "First step", "Second step" }
+Id = 10,
+Title = "Recipe A",
+Ingredients = new() { "1 apple" },
+Instructions = new() { "First step", "Second step" }
             },
-            new Recipe
+new Recipe
             {
-                Id = 20,
-                Title = "Recipe B"
+Id = 20,
+Title = "Recipe B"
             }
         });
+    }
+
+[Fact]
+public void AddRecipe_NormalValidRecipe_AddSuccessReturnsTrue()
+    {
+var mgr = new RecipeManager(new List<Recipe>());
+var recipe = new Recipe
+        {
+Id = 5,
+Title = "Pasta",
+Ingredients = new List<string>(),
+Instructions = new List<string>()
+        };
+bool result = mgr.AddRecipe(recipe);
+Assert.True(result);
+Assert.Equal(1, mgr.RecipeCount);
     }
 }
