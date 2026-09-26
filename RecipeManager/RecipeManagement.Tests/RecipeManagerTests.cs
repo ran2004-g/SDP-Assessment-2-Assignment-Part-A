@@ -55,6 +55,7 @@ Title = "Recipe B"
     }
 
 [Fact]
+
 public void AddRecipe_NormalValidRecipe_AddSuccessReturnsTrue()
     {
 var mgr = new RecipeManager(new List<Recipe>());
@@ -70,7 +71,7 @@ Assert.True(result);
 Assert.Equal(1, mgr.RecipeCount);
     }
     
-}
+
 [Fact]
 public void AddRecipe_DuplicateId_ReturnsFalse()
 {
@@ -88,4 +89,12 @@ public void AddRecipe_DuplicateId_ReturnsFalse()
     Assert.False(result);
     Assert.Equal(2, mgr.RecipeCount);
 }
-
+[Fact]
+public void FindRecipe_MissingId_ReturnsNull()
+{
+    var manager = CreateManager();
+    var found = manager.FindRecipe(999);
+    Assert.Null(found);
+        
+}
+}
