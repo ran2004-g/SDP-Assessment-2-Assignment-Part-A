@@ -229,6 +229,22 @@ public sealed class RecipeManagerTests
       var plan = manager.GetCookingPlan();
       Assert.Equal(new[] {10, 20}, plan);
   }
+  [Fact]
+   public void CookingPlan_DuplicateRecipe_ReturnsFalse()
+  {
+      var manager = CreateManager();
+      // Add recipe 10 to cooking plan for the first time
+      bool firstAdd = manager.AddRecipeToCookingPlan(10);
+      // Try adding recipe 10 again
+      bool secondAdd = manager.AddRecipeToCookingPlan(10);
+      var plan = manager.GetCookingPlan();
+
+      Assert.True(firstAdd);
+      Assert.False(secondAdd);
+      Assert.Single(plan);
+      Assert.Equal(10, plan[0]);
+  }
+
 
 
     
