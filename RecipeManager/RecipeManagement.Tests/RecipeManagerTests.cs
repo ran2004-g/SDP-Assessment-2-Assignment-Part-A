@@ -173,6 +173,27 @@ public sealed class RecipeManagerTests
        var step = manager.PeekNextInstruction();
        Assert.Null(step);
    }
+   [Fact]
+    public void CompleteNextInstruction_AllStepsFinished_ReturnsNull()
+   {
+       var manager = CreateManager();
+       // Start recipe 10 and consume all instructions
+       manager.StartCooking(10);
+       manager.CompleteNextInstruction();
+       manager.CompleteNextInstruction();
+       // No more instructions left
+       var nextStep = manager.CompleteNextInstruction();
+       Assert.Null(nextStep);
+   }
+
+   [Fact]
+    public void RemoveRecipeFromCookingPlan_RecipeNotInPlan_ReturnsFalse()
+   {
+       var manager = CreateManager();
+       // Try to remove a recipe id that is not present in cooking plan
+       bool removed = manager.RemoveRecipeFromCookingPlan(999);
+       Assert.False(removed);
+   }
 
 
     
