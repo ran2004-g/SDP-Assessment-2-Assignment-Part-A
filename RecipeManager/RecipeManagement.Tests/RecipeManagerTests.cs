@@ -219,6 +219,16 @@ public sealed class RecipeManagerTests
       var plan = manager.GetCookingPlan();
       Assert.Empty(plan);
   }
+  [Fact]
+   public void GetCookingPlan_ItemsInAddedOrder_ReturnsPreservedOrder()
+  {
+      var manager = CreateManager();
+      // Add recipe 10 then 20 into cooking plan
+      manager.AddRecipeToCookingPlan(10);
+      manager.AddRecipeToCookingPlan(20);
+      var plan = manager.GetCookingPlan();
+      Assert.Equal(new[] {10, 20}, plan);
+  }
 
 
     
