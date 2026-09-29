@@ -156,6 +156,23 @@ public sealed class RecipeManagerTests
        bool startResult = manager.StartCooking(999);
        Assert.False(startResult);
    }
+   [Fact]
+    public void CompleteNextInstruction_NoActiveRecipe_ReturnsNull()
+   {
+       var manager = CreateManager();
+       // No recipe has been started, so there are no active instructions
+       var step = manager.CompleteNextInstruction();
+       Assert.Null(step);
+   }
+
+   [Fact]
+    public void PeekNextInstruction_NoActiveRecipe_ReturnsNull()
+   {
+       var manager = CreateManager();
+       // No recipe has been started, so cannot peek next instruction
+       var step = manager.PeekNextInstruction();
+       Assert.Null(step);
+   }
 
 
     
