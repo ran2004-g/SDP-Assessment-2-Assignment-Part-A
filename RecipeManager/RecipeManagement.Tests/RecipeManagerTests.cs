@@ -116,6 +116,25 @@ public sealed class RecipeManagerTests
         // Verity ingredients order , Recipe A has ingredient " 1 apple"
         Assert.Single(shoppingItems);
         Assert.Equal("1 apple ",shoppingItems[0]);
-        
+
+    }
+    [Fact]
+    public void ShoppingList_AddTwoRecipe_IngredientConcatenated()
+    {
+        var manager = CreateManager();
+        // Recipe10: 1 apple; manaully add ingredients to Recipe20 for testing
+        var recipe20 = manager.FindRecipe(20)!;
+        recipe20.Ingredients.Add("2 eggs");
+
+        manager.AddRecipeToShoppingList(10);
+        manager.AddRecipeToShoppingList(20);
+        var shoppingItems = manager.GetShoppingList();
+
+        Assert.Equal(2, shoppingItems.Count);
+        Assert.Equal("1 apple", shoppingItems[0]);
+        Assert.Equal("2 eggs", shoppingItems[1]);
+
+    
+    
     }
 }
