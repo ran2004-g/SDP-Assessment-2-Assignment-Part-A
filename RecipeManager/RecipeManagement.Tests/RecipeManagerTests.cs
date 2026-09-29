@@ -164,6 +164,14 @@ public sealed class RecipeManagerTests
        var step = manager.CompleteNextInstruction();
        Assert.Null(step);
    }
+   [Fact]
+    public void PeekLastRemovedRecipe_EmptyStack_ReturnsNull()
+   {
+       var manager = CreateManager();
+       // Stack of removed recipes is empty, peek should return null
+       var lastRemoved = manager.PeekLastRemovedRecipe();
+       Assert.Null(lastRemoved);
+   }
 
    [Fact]
     public void PeekNextInstruction_NoActiveRecipe_ReturnsNull()
