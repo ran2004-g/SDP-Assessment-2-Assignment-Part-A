@@ -92,9 +92,19 @@ public void AddRecipe_DuplicateId_ReturnsFalse()
 [Fact]
 public void FindRecipe_MissingId_ReturnsNull()
 {
-    var manager = CreateManager();
-    var found = manager.FindRecipe(999);
-    Assert.Null(found);
-        
+var manager = CreateManager();
+var found = manager.FindRecipe(999);
+Assert.Null(found);
 }
+
+[Fact]
+public void RemoveRecipe_ExistingRecipe_RemoveSuccess()
+{
+var manager = CreateManager();
+bool removed = manager.RemoveRecipe(10);
+Assert.True(removed);
+Assert.Null(manager.FindRecipe(10));
+Assert.Equal(1,manager.RecipeCount);
+}
+
 }
