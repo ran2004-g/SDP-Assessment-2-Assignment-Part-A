@@ -107,34 +107,50 @@ public sealed class RecipeManagerTests
         Assert.Equal(1,manager.RecipeCount);
     }
     [Fact]
-    public void ShoppingList_AddIngredients_AdddedInOreder()
+    public void ShoppingList_AddIngredients_AddedInOrder()
     {
         var manager = CreateManager();
-        // Add Recipe 10 to shopping list
-        manager.AddRecipeToShoppingList(10);
+        // Add all ingredients of recipe 10 to shopping list
+        int added = manager.AddIngredientsToShoppingList(10);
         var shoppingItems = manager.GetShoppingList();
-        // Verity ingredients order , Recipe A has ingredient " 1 apple"
+        // Verify ingredients order, Recipe A has ingredient "1 apple"
+        Assert.Equal(1, added);
         Assert.Single(shoppingItems);
-        Assert.Equal("1 apple ",shoppingItems[0]);
-
-    }
-    [Fact]
-    public void ShoppingList_AddTwoRecipe_IngredientConcatenated()
-    {
-        var manager = CreateManager();
-        // Recipe10: 1 apple; manaully add ingredients to Recipe20 for testing
-        var recipe20 = manager.FindRecipe(20)!;
-        recipe20.Ingredients.Add("2 eggs");
-
-        manager.AddRecipeToShoppingList(10);
-        manager.AddRecipeToShoppingList(20);
-        var shoppingItems = manager.GetShoppingList();
-
-        Assert.Equal(2, shoppingItems.Count);
         Assert.Equal("1 apple", shoppingItems[0]);
-        Assert.Equal("2 eggs", shoppingItems[1]);
+    }
+
+    [Fact]
+     public void ShoppingList_AddTwoRecipes_IngredientsConcatenated()
+   {
+       var manager = CreateManager();
+       // Recipe10 contains "1 apple"; manually add ingredients to Recipe20 for testing
+       var recipe20 = manager.FindRecipe(20)!;
+       recipe20.Ingredients.Add("2 eggs");
+
+       int added1 = manager.AddIngredientsToShoppingList(10);
+       int added2 = manager.AddIngredientsToShoppingList(20);
+       var shoppingItems = manager.GetShoppingList();
+
+       Assert.Equal(1, added1);
+       Assert.Equal(1, added2);
+       Assert.Equal(2, shoppingItems.Count);
+       Assert.Equal("1 apple", shoppingItems[0]);
+       Assert.Equal("2 eggs", shoppingItems[1]);
+   }
+
+    [Fact]
+     public void ShoppingList_ClearShoppingList_EmptiesList()
+   {
+       var manager = CreateManager();
+       // Add recipe 10 ingredients into shopping list
+       manager.AddIngredientsToShoppingList(10);
+       manager.ClearShoppingList();
+       var shoppingItems = manager.GetShoppingList();
+       Assert.Empty(shoppingItems);
+   }
+
 
     
-    
-    }
+
+
 }
