@@ -194,6 +194,23 @@ public sealed class RecipeManagerTests
        bool removed = manager.RemoveRecipeFromCookingPlan(999);
        Assert.False(removed);
    }
+   [Fact]
+    public void RestoreLastRemovedRecipe_NothingRemoved_ReturnsFalse()
+   {
+       var manager = CreateManager();
+       // No recipes have been removed from cooking plan yet
+       bool restoreResult = manager.RestoreLastRemovedRecipe();
+       Assert.False(restoreResult);
+   }
+
+   [Fact]
+    public void GetCookingPlan_EmptyByDefault_ReturnsEmptyReadOnlyList()
+  {
+      var manager = CreateManager();
+      // Cooking plan should be empty when newly created
+      var plan = manager.GetCookingPlan();
+      Assert.Empty(plan);
+  }
 
 
     
