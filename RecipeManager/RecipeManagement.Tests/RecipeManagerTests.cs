@@ -148,6 +148,14 @@ public sealed class RecipeManagerTests
        var shoppingItems = manager.GetShoppingList();
        Assert.Empty(shoppingItems);
    }
+   [Fact]
+    public void StartCooking_InvalidRecipeId_ReturnsFalse()
+   {
+       var manager = CreateManager();
+       // Attempt to start cooking for a recipe that does not exist
+       bool startResult = manager.StartCooking(999);
+       Assert.False(startResult);
+   }
 
 
     
