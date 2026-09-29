@@ -228,13 +228,13 @@ public sealed class RecipeManagerTests
    }
 
    [Fact]
-    public void GetCookingPlan_EmptyByDefault_ReturnsEmptyReadOnlyList()
-  {
-      var manager = CreateManager();
-      // Cooking plan should be empty when newly created
-      var plan = manager.GetCookingPlan();
-      Assert.Empty(plan);
-  }
+    public void GetCookingPlan_EmptyByDefault_ReturnsEmptyList()
+   {
+       var manager = CreateManager();
+       // Cooking plan should be empty when newly created
+       var plan = manager.GetCookingPlan();
+       Assert.Empty(plan);
+   }
   [Fact]
    public void GetCookingPlan_ItemsInAddedOrder_ReturnsPreservedOrder()
   {
